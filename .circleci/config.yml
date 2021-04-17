@@ -18,7 +18,7 @@ jobs:
           command: |
             aws cloudformation deploy \
             --stack-name cicd-lesson4 \
-            --template-body template.yml \
+            --template-file template.yml \
 
 workflows:
   # Name the workflow "welcome"
