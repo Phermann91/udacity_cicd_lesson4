@@ -19,7 +19,7 @@ jobs:
           name: Ensure backend infrastructure exist
           command: |
             aws cloudformation create-stack \
-            --template-file template.yml \
+            --template-body template.yml \
             --stack-name cicd-lessons
 
 workflows:
