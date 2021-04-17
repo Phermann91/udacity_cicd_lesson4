@@ -20,7 +20,9 @@ jobs:
           command: |
             aws cloudformation create-stack \
             --stack-name cicd-lessons \
-            --template-body template.yml
+            --region us-east-1 \
+            --template-body file://template.yml
+
 
 workflows:
   # Name the workflow "welcome"
