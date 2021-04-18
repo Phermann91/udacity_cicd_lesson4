@@ -67,5 +67,5 @@ workflows:
       #- create_infrastructure
       - execute_playbook
       - smoke_test:
-          required:
+          requires:
             - execute_playbook
