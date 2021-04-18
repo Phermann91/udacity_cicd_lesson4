@@ -21,7 +21,7 @@ jobs:
             aws cloudformation create-stack \
             --stack-name cicd-lessons \
             --region us-east-1 \
-            --template-body file://template.yml
+            --template-body file://template.yml \
             --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
 
   execute_playbook:
