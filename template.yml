@@ -12,9 +12,8 @@ Resources:
       KeyName: udacity
       ImageId: 'ami-042e8287309f5df03' # 'ami-068663a3c619dd892'
       Tags:
-        - Tag:
-            Key: Udacity
-            Value: cicd_lessons
+        - Key: "Udacity"
+          Value: "cicd_lessons"
 
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
