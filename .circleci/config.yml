@@ -27,6 +27,13 @@ jobs:
             aws cloudformation deploy \
             --stack-name prod-${CIRCLE_WORKFLOW_ID} \
             --template-file template.yml
+      - run:
+          name: write in inventory
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:aws:cloudformation:stack-name,Values=prod-${CIRCLE_WORKFLOW_ID}" \
+            --output text >> inventory.txt
 
   execute_playbook:
     docker:
