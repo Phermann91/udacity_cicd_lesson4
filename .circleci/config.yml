@@ -22,6 +22,7 @@ jobs:
             --stack-name cicd-lessons \
             --region us-east-1 \
             --template-body file://template.yml
+            --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
 
   execute_playbook:
     docker:
@@ -63,8 +64,4 @@ workflows:
   infrastructure:
     # Run the welcome/run job in its own container
     jobs:
-      #- create_infrastructure
-      - execute_playbook
-      - smoke_test:
-          requires:
-            - execute_playbook
+      - create_infrastructure
