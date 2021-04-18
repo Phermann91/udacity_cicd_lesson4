@@ -40,6 +40,24 @@ jobs:
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i inventory.txt playbook.yml
 
+  smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - checkout
+      - run: apk add --update curl
+      - run:
+          name: smoke test!
+          command: |
+          URL = "ec2-54-159-26-135.compute-1.amazonaws.com:3000"
+          if curl -s --head ${URL}
+          then
+            echo "reached page!"
+            return 0
+          else
+            echo "failed!"
+            return 1
+          fi
 
 workflows:
   # Name the workflow "welcome"
@@ -48,3 +66,6 @@ workflows:
     jobs:
       #- create_infrastructure
       - execute_playbook
+      - smoke_test:
+          required:
+            - execute_playbook
