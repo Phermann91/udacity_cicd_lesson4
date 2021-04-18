@@ -49,15 +49,15 @@ jobs:
       - run:
           name: smoke test!
           command: |
-          URL = "ec2-54-159-26-135.compute-1.amazonaws.com:3000"
-          if curl -s --head ${URL}
-          then
-            echo "reached page!"
-            return 0
-          else
-            echo "failed!"
-            return 1
-          fi
+            URL = "ec2-54-159-26-135.compute-1.amazonaws.com:3000"
+            if curl -s --head ${URL}
+            then
+              echo "reached page!"
+              return 0
+            else
+              echo "failed!"
+              return 1
+            fi
 
 workflows:
   # Name the workflow "welcome"
