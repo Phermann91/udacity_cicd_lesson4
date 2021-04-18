@@ -2,6 +2,12 @@
 version: 2.1
 # command section
 commands:
+  
+  delete_stack:
+    steps:
+      - run:
+          command: |
+            aws delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID}
 
 # Use a package of configuration called an orb.
 orbs:
@@ -18,11 +24,9 @@ jobs:
       - run:
           name: Ensure backend infrastructure exist
           command: |
-            aws cloudformation create-stack \
-            --stack-name cicd-lessons \
-            --region us-east-1 \
-            --template-body file://template.yml \
-            --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
+            aws cloudformation deploy \
+            --stack-name prod-${CIRCLE_WORKFLOW_ID} \
+            --template-file template.yml
 
   execute_playbook:
     docker:
