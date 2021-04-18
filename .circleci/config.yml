@@ -35,8 +35,7 @@ jobs:
             --filters "Name=tag:aws:cloudformation:stack-name,Values=prod-${CIRCLE_WORKFLOW_ID}" \
             --output text >> inventory.txt
 
-      - run:
-          return 1
+      - run: return 1
       - delete_stack
         when: on_fail
 
