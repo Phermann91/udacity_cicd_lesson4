@@ -49,8 +49,7 @@ jobs:
       - run:
           name: smoke test!
           command: |
-            URL = "ec2-54-159-26-135.compute-1.amazonaws.com:3000"
-            if curl -s --head ${URL}
+            if curl -s --head "ec2-54-159-26-135.compute-1.amazonaws.com:3000"
             then
               echo "reached page!"
               return 0
