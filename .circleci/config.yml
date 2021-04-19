@@ -102,7 +102,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: get last deployment id
+          name: get last deployment id please
           command: |
             aws cloudformation \
             list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
