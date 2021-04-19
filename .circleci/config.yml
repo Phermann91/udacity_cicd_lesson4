@@ -33,8 +33,11 @@ jobs:
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:aws:cloudformation:stack-name,Values=prod-${CIRCLE_WORKFLOW_ID}" \
-            --output text >> inventory.txt
-
+            --output text >> ~/inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - inventory.txt
       - run:
           command: |
             return 1
@@ -52,11 +55,13 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible # install the dependencies needed for your playbook
+      - attach_workspace:
+          at: ~/
       - run:
           name: Configure server
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
-            ansible-playbook -i inventory.txt playbook.yml
+            ansible-playbook -i ~/inventory.txt playbook.yml
 
   smoke_test:
     docker:
@@ -75,10 +80,70 @@ jobs:
               echo "failed!"
               return 1
             fi
+  
+  create_and_deploy_front_end:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: create and deploy front end
+          command: |
+          aws cloudformation deploy \
+          --template-file bucket.yml \
+          --stack-name "${CIRCLE_WORKFLOW_ID}" \
+          --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+      - run: aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID}" --delete
+
+  get_last_deployment_id:
+    docker :
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: get last deployment id
+          command: |
+          aws cloudformation \
+          list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
+          --no-paginate --output text >> ~/last_deployment_id.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - last_deployment_id.txt
+
+  promote_to_production:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: cloudfront execution
+          command: |
+          aws cloudformation deploy \
+          --template-file cloudfront.yml \
+          --stack-name production-distro \
+          --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+
+  clean_up_old_front_end:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      -checkout
+      - attach_workspace:
+          at: ~/
+      - run:
+          command: |
+          aws s3 rm "s3://$(cat ~/last_deployment_id.txt)" --recursive
+          aws cloudformation delete-stack --stack-name "$(cat ~/last_deployment_id.txt)"
 
 workflows:
   # Name the workflow "welcome"
   infrastructure:
     # Run the welcome/run job in its own container
     jobs:
-      - create_infrastructure
+      - create_and_deploy_front_end
+      - get_last_deployment_id
+      - promote_to_production
+          requires: [create_and_deploy_front_end]
+      - clean_up_old_front_end
+          requires: [promote_to_production, get_last_deployment_id]
