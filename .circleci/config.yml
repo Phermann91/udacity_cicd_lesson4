@@ -101,9 +101,9 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
       - run: yum install -y tar
       - run: yum install -y gzip
+      - run:
           name: get last deployment id please
           command: |
             aws cloudformation \
