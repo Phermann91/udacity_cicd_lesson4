@@ -141,7 +141,7 @@ jobs:
       - run:
           command: |
               aws s3 rm "s3://$(cat ~/last_deployment_id.txt)" --recursive
-              aws cloudformation delete-stack --stack-name "$(cat ~/last_deployment_id.txt)"
+              aws cloudformation delete-stack --stack-name "bucket-$(cat ~/last_deployment_id.txt)"
 # aws s3 rm "s3://${OldPipelineID}" --recursive
 # aws cloudformation delete-stack --stack-name "${OldPipelineID}" .
 
