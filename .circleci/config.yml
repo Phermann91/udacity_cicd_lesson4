@@ -92,9 +92,9 @@ jobs:
           command: |
             aws cloudformation deploy \
             --template-file bucket.yml \
-            --stack-name "${CIRCLE_WORKFLOW_ID:0:7}" \
-            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - run: aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID:0:7}" --delete
+            --stack-name "${CIRCLE_WORKFLOW_ID}" \
+            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+      - run: aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID}" --delete
 
   get_last_deployment_id:
     docker :
@@ -139,10 +139,10 @@ jobs:
       - run: cat ~/last_deployment_id.txt
       - run:
           command: |
-            aws s3 rm "s3://${OldPipelineID}" --recursive
-            aws cloudformation delete-stack --stack-name "${OldPipelineID}"
-# aws s3 rm "s3://$(cat ~/last_deployment_id.txt)" --recursive
-# aws cloudformation delete-stack --stack-name "$(cat ~/last_deployment_id.txt)"
+              aws s3 rm "s3://$(cat ~/last_deployment_id.txt)" --recursive
+              aws cloudformation delete-stack --stack-name "$(cat ~/last_deployment_id.txt)"
+# aws s3 rm "s3://${OldPipelineID}" --recursive
+# aws cloudformation delete-stack --stack-name "${OldPipelineID}"
 
 workflows:
   # Name the workflow "welcome"
