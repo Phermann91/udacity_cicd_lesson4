@@ -1,5 +1,5 @@
 Parameters:
-  PipelineID:
+  NAME:
     Type: String
 
 Resources:
@@ -7,7 +7,7 @@ Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${PipelineID}"
+      BucketName: !Sub "${NAME}"
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
