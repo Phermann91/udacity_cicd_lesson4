@@ -107,8 +107,9 @@ jobs:
           name: get last deployment id please
           command: |
             aws cloudformation \
-            list-exports --query "Exports[?Name==\`NAME\`].Value" \
+            list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
             --no-paginate --output text >> ~/last_deployment_id.txt
+            cat ~/last_deployment_id.txt
       - persist_to_workspace:
           root: ~/
           paths:
