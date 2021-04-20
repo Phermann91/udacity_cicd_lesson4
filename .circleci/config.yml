@@ -132,8 +132,11 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run: yum install -y tar
+      - run: yum install -y gzip
       - attach_workspace:
           at: ~/
+      - run: cat ~/last_deployment_id.txt
       - run:
           command: |
             aws s3 rm "s3://${OldPipelineID}" --recursive
